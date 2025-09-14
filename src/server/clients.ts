@@ -3,7 +3,13 @@
 import { db } from '@/db'
 import { clients } from '@/db/schema'
 import { auth } from '@/lib/auth'
+import { actionClient } from '@/lib/safe-action'
+import {
+  insertClientSchema,
+  insertClientSchemaType
+} from '@/zod-schemas/clients'
 import { asc, eq } from 'drizzle-orm'
+import { flattenValidationErrors } from 'next-safe-action'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -30,3 +36,69 @@ export async function getClientTwo(id: string) {
 
   return client[0]
 }
+
+//use-safe-actions
+
+export const saveClientAction = actionClient
+  .metadata({ actionName: 'saveClientAction' })
+  .inputSchema(insertClientSchema, {
+    handleValidationErrorsShape: async ve =>
+      flattenValidationErrors(ve).fieldErrors
+  })
+  .action(
+    async ({
+      parsedInput: client
+    }: {
+      parsedInput: insertClientSchemaType
+    }) => {
+      const session = await auth.api.getSession({
+        headers: await headers()
+      })
+
+      if (!session) redirect('/auth/sign-in')
+
+      // New Client
+      // All new clients are active by default - no need to set active to true
+      // createdAt and updatedAt are set by the database
+
+      if (client.id === '') {
+        const result = await db
+          .insert(clients)
+          .values({
+            name: client.name,
+            userId: client.userId,
+            entity_type: client.entity_type,
+            owner: client.owner,
+
+            // customer.notes is an optional field
+            ...(client.notes?.trim() ? { notes: client.notes } : {})
+          })
+          .returning({ insertedId: clients.id })
+
+        return {
+          message: `Client ID #${result[0].insertedId} created successfully`
+        }
+      }
+
+      // Existing client
+      // updatedAt is set by the database
+      const result = await db
+        .update(clients)
+        .set({
+          name: client.name,
+          userId: client.userId,
+          entity_type: client.entity_type,
+          owner: client.owner,
+          // customer.notes is an optional field
+          notes: client.notes?.trim() ?? null,
+          active: client.active
+        })
+        // ! confirms customer.id will always exist for the update function
+        .where(eq(clients.id, client.id!))
+        .returning({ updatedId: clients.id })
+
+      return {
+        message: `Client ID #${result[0].updatedId} updated successfully`
+      }
+    }
+  )

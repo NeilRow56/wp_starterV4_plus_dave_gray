@@ -7,7 +7,19 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export default async function ClientTwoFormPage({
+export async function generateMetadata({
+  searchParams
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+  const { clientId } = await searchParams
+
+  if (!clientId) return { title: 'New Client' }
+
+  return { title: `Edit Client #${clientId}` }
+}
+
+export default async function ClientFormPage({
   searchParams
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>

@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useForm } from 'react-hook-form'
 
+import { useAction } from 'next-safe-action/hooks'
+
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 
 import { Client, User } from '@/db/schema'
@@ -17,6 +19,12 @@ import {
   insertClientSchemaType,
   insertClientSchema
 } from '@/zod-schemas/clients'
+import { CheckboxWithLabel } from '@/components/form/checkbox-with-label'
+import { useState } from 'react'
+import { saveClientAction } from '@/server/clients'
+import { toast } from 'sonner'
+import { DisplayServerActionResponse } from '@/components/display-server-action-response'
+import { LoaderCircle } from 'lucide-react'
 
 interface ClientFormProps {
   user: User // You must have a user to start a customer - so it is not optional
@@ -24,8 +32,9 @@ interface ClientFormProps {
 }
 
 export const ClientForm = ({ user, client }: ClientFormProps) => {
-  // const [isLoading] = useState(false)
+  const [isLoading] = useState(false)
   const defaultValues: insertClientSchemaType = {
+    id: client?.id ?? '',
     name: client?.name ?? '',
     userId: client?.userId ?? user.id,
     entity_type: client?.entity_type ?? '',
@@ -39,15 +48,34 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
     defaultValues
   })
 
+  const {
+    execute: executeSave,
+    result: saveResult,
+    isPending: isSaving,
+    reset: resetSaveAction
+  } = useAction(saveClientAction, {
+    onSuccess({ data }) {
+      if (data?.message) {
+        toast.success(`Client ${client ? 'updated ' : 'added'} successfully`)
+      }
+    },
+    onError({ error }) {
+      console.log(error)
+      toast.error(`Failed to ${client ? 'update' : 'add'} client`)
+    }
+  })
+
   async function submitForm(data: insertClientSchemaType) {
-    console.log(data)
+    executeSave(data)
   }
   return (
     <div className='container mx-auto mt-24'>
       <div className='flex flex-col gap-1 sm:px-8'>
+        <DisplayServerActionResponse result={saveResult} />
         <div className='items-center justify-center'>
           <h2 className='text-2xl font-bold lg:text-3xl'>
-            {client?.id ? `Edit Client # ${client.id}` : 'New Client Form'}
+            {client?.id ? 'Edit' : 'New'} Client{' '}
+            {client?.id ? `#${client.id}` : 'Form'}
           </h2>
         </div>
         <Form {...form}>
@@ -83,7 +111,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
                 data={EntityArray}
               />
 
-              {/* {isLoading ? (
+              {isLoading ? (
                 <p>Loading...</p>
               ) : client?.id ? (
                 <CheckboxWithLabel<insertClientSchemaType>
@@ -91,7 +119,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
                   nameInSchema='active'
                   message='Yes'
                 />
-              ) : null} */}
+              ) : null}
             </div>
 
             <div className='flex w-full flex-col gap-4'>
@@ -104,19 +132,28 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
               <div className='flex max-w-md justify-between'>
                 <Button
                   type='submit'
-                  className='w-1/5'
+                  className='w-3/4'
                   variant='default'
                   title='Save'
+                  disabled={isSaving}
                 >
-                  Save
+                  {isSaving ? (
+                    <>
+                      <LoaderCircle className='animate-spin' /> Saving
+                    </>
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
 
                 <Button
                   type='button'
-                  className='w-1/5'
                   variant='destructive'
                   title='Reset'
-                  onClick={() => form.reset(defaultValues)}
+                  onClick={() => {
+                    form.reset(defaultValues)
+                    resetSaveAction()
+                  }}
                 >
                   Reset
                 </Button>
