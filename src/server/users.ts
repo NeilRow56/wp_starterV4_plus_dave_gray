@@ -33,6 +33,12 @@ export const getCurrentUser = async () => {
   }
 }
 
+export async function getClientUser(id: string) {
+  const userDetails = await db.select().from(user).where(eq(user.id, id))
+
+  return userDetails[0]
+}
+
 export const signIn = async (email: string, password: string) => {
   try {
     await auth.api.signInEmail({

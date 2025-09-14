@@ -1,4 +1,13 @@
-import { pgTable, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core'
+import { relations, sql } from 'drizzle-orm'
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  varchar,
+  integer
+} from 'drizzle-orm/pg-core'
 
 export const role = pgEnum('role', ['admin', 'manager', 'team'])
 
@@ -67,9 +76,62 @@ export const verification = pgTable('verification', {
   )
 })
 
+export const clients = pgTable('clients', {
+  id: text('id')
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  name: varchar('name').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'restrict' }),
+  entity_type: varchar('entity_type', { length: 2 }).notNull(),
+  owner: varchar('owner').notNull(),
+  notes: text('notes'),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+})
+
+export type Client = typeof clients.$inferSelect
+
+export const ClientRelations = relations(clients, ({ many }) => ({
+  accountinPeriods: many(accountsPeriod)
+}))
+
+export const accountsPeriod = pgTable('accounts_period', {
+  id: text('id')
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  clientId: text('customer_id')
+    .notNull()
+    .references(() => clients.id),
+  periodNumeric: integer('period_numeric').notNull(),
+  periodEnding: varchar('period_ending').notNull(),
+  completed: boolean('completed').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date())
+})
+
+export type AccountingPeriod = typeof accountsPeriod.$inferSelect
+
+export const accountsPeriodRelations = relations(accountsPeriod, ({ one }) => ({
+  client: one(clients, {
+    fields: [accountsPeriod.clientId],
+    references: [clients.id]
+  })
+  // accountsSections: many(accountsSection)
+}))
+
 export const schema = {
   user,
   session,
   account,
-  verification
+  verification,
+  clients,
+  ClientRelations,
+  accountsPeriod,
+  accountsPeriodRelations
 }
