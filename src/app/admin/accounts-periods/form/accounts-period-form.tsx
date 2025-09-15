@@ -20,6 +20,7 @@ import { saveAccountsPeriodAction } from '@/server/accounts-period'
 import { toast } from 'sonner'
 import { DisplayServerActionResponse } from '@/components/display-server-action-response'
 import { LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
 
 interface AccountsPeriodFormProps {
   client: Client // You must have a client to start an accounts period - so it is not optional
@@ -30,6 +31,7 @@ export default function AccountsPeriodForm({
   client,
   accounts_period
 }: AccountsPeriodFormProps) {
+  const [isLoading] = useState(false)
   const defaultValues: insertAccountsPeriodSchemaType = {
     id: accounts_period?.id ?? '(New)',
     clientId: accounts_period?.clientId ?? client.id,
@@ -96,12 +98,13 @@ export default function AccountsPeriodForm({
               nameInSchema='periodEnding'
             />
 
-            {accounts_period?.id ? (
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : accounts_period?.id ? (
               <CheckboxWithLabel<insertAccountsPeriodSchemaType>
                 fieldTitle='Completed'
                 nameInSchema='completed'
                 message='Yes'
-                // disabled={!isEditable}
               />
             ) : null}
 
@@ -133,7 +136,6 @@ export default function AccountsPeriodForm({
                 <span className='mr-5 font-bold'> Notes: </span>
               </div>
               <div className='col-span-2 text-wrap'>
-                {/* <p className=''>{client.notes}</p> */}
                 <Textarea value={(client.notes as string) ?? ''} readOnly />
               </div>
             </div>

@@ -73,7 +73,7 @@ export const saveAccountsPeriodAction = actionClient
           periodEnding: AccPeriod.periodEnding,
           completed: AccPeriod.completed
         })
-        .where(eq(accounts_period.id, accounts_period.id!))
+        .where(eq(accounts_period.id, AccPeriod.id!))
         .returning({ updatedId: accounts_period.id })
 
       return {
