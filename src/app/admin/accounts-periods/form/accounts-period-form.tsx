@@ -75,8 +75,9 @@ export default function AccountsPeriodForm({
       <div className='flex min-w-md flex-col'>
         <h2 className='mb-2 text-2xl font-bold'>
           {accounts_period?.id
-            ? `Edit Accounting Period # ${accounts_period.id}`
-            : 'New Ticket Form'}
+            ? // ? `Edit Accounting Period  # ${accounts_period.id}`
+              `Edit Accounting Period  `
+            : 'New Accounting Period Form'}
         </h2>
       </div>
       <Form {...form}>
@@ -133,7 +134,7 @@ export default function AccountsPeriodForm({
               </div>
               <div className='col-span-2 text-wrap'>
                 {/* <p className=''>{client.notes}</p> */}
-                <Textarea value={client.notes as string} readOnly />
+                <Textarea value={(client.notes as string) ?? ''} readOnly />
               </div>
             </div>
             <div className='full flex justify-between'>

@@ -107,8 +107,7 @@ export default async function AccountsPeriodFormPage({
       const client = await getClient(accountsPeriod.clientId)
 
       // return accountsPeriod form
-      console.log('accountsPeriod: ', accountsPeriod)
-      console.log('client: ', client)
+
       return (
         <AccountsPeriodForm client={client} accounts_period={accountsPeriod} />
       )

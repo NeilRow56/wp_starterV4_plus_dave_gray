@@ -62,21 +62,22 @@ export const saveAccountsPeriodAction = actionClient
         }
       }
 
-      // Updating ticket
+      // Updating accounting period
       // updatedAt is set by the database
       const result = await db
+        // await db
         .update(accounts_period)
         .set({
-          clientId: accounts_period.clientId,
-          periodNumeric: accounts_period.periodNumeric,
-          periodEnding: accounts_period.periodEnding,
-          completed: accounts_period.completed
+          clientId: AccPeriod.clientId,
+          periodNumeric: AccPeriod.periodNumeric,
+          periodEnding: AccPeriod.periodEnding,
+          completed: AccPeriod.completed
         })
         .where(eq(accounts_period.id, accounts_period.id!))
         .returning({ updatedId: accounts_period.id })
 
       return {
-        message: `Accountsaccounts_period ID #${result[0].updatedId} updated successfully`
+        message: `Accounting Period ID #${result[0].updatedId} updated successfully`
       }
     }
   )
