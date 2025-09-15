@@ -57,7 +57,6 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
     onSuccess({ data }) {
       if (data?.message) {
         toast.success(`Client ${client ? 'updated ' : 'added'} successfully`)
-        console.log(data)
       }
     },
     onError({ error }) {
@@ -71,10 +70,10 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
   }
   return (
     <div className='container mx-auto mt-24'>
-      <div className='flex flex-col gap-1 sm:px-8'>
+      <div className='flex flex-col gap-1 text-center sm:px-8'>
         <DisplayServerActionResponse result={saveResult} />
         <div className='items-center justify-center'>
-          <h2 className='text-2xl font-bold lg:text-3xl'>
+          <h2 className='text-primary text-2xl font-bold lg:text-3xl'>
             {client?.id ? 'Edit' : 'New'} Client{' '}
             {client?.id ? `#${client.id}` : 'Form'}
           </h2>
@@ -82,7 +81,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submitForm)}
-            className='mx-auto mt-8 flex w-4xl flex-col gap-4 md:gap-8 xl:flex-row'
+            className='mx-auto mt-8 flex w-4xl flex-col gap-4 rounded-lg border p-8 md:gap-8 xl:flex-row'
           >
             <div className='flex w-full flex-col gap-4'>
               <FormField
@@ -130,10 +129,10 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
                 className='h-40 p-0'
               />
 
-              <div className='flex max-w-md justify-between'>
+              <div className='flex max-w-lg justify-between'>
                 <Button
                   type='submit'
-                  className='w-3/4'
+                  className='w-1/4'
                   variant='default'
                   title='Save'
                   disabled={isSaving}
@@ -149,6 +148,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
 
                 <Button
                   type='button'
+                  className='w-1/4'
                   variant='destructive'
                   title='Reset'
                   onClick={() => {

@@ -84,7 +84,6 @@ export default async function AccountsPeriodFormPage({
           </>
         )
       }
-      console.log(client)
 
       return <AccountsPeriodForm client={client} />
     }

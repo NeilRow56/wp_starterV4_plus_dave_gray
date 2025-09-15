@@ -57,6 +57,10 @@ export const saveClientAction = actionClient
 
       if (!session) redirect('/auth/sign-in')
 
+      // ERROR TESTS
+
+      // throw Error('test error client create action')
+
       // New Client
       // All new clients are active by default - no need to set active to true
       // createdAt and updatedAt are set by the database

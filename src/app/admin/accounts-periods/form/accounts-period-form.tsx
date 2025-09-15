@@ -72,106 +72,110 @@ export default function AccountsPeriodForm({
   }
 
   return (
-    <div className='container mx-auto'>
-      <DisplayServerActionResponse result={saveResult} />
-      <div className='flex min-w-md flex-col'>
-        <h2 className='mb-2 text-2xl font-bold'>
-          {accounts_period?.id
-            ? // ? `Edit Accounting Period  # ${accounts_period.id}`
-              `Edit Accounting Period  `
-            : 'New Accounting Period Form'}
-        </h2>
-      </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(submitForm)}
-          className='mt-24 flex flex-col gap-4'
-        >
-          <div className='container mx-auto flex w-full max-w-lg min-w-[400px] flex-col gap-4'>
-            <InputWithLabel<insertAccountsPeriodSchemaType>
-              fieldTitle='Period Header'
-              nameInSchema='periodNumeric'
-              className=''
-            />
-            <InputWithLabel<insertAccountsPeriodSchemaType>
-              fieldTitle='Period Ending'
-              nameInSchema='periodEnding'
-            />
-
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : accounts_period?.id ? (
-              <CheckboxWithLabel<insertAccountsPeriodSchemaType>
-                fieldTitle='Completed'
-                nameInSchema='completed'
-                message='Yes'
+    <div className='container mx-auto mt-24'>
+      <div className='flex flex-col gap-1 text-center sm:px-8'>
+        <DisplayServerActionResponse result={saveResult} />
+        <div className='items-center justify-center'>
+          <h2 className='text-primary mb-2 text-2xl font-bold'>
+            {accounts_period?.id
+              ? // ? `Edit Accounting Period  # ${accounts_period.id}`
+                `Edit Accounting Period  `
+              : 'New Accounting Period Form'}
+          </h2>
+        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(submitForm)}
+            className='mx-auto mt-8 flex flex-col gap-4 rounded-lg border p-8'
+          >
+            <div className='mx-auto flex w-full max-w-lg min-w-[400px] flex-col gap-4'>
+              <InputWithLabel<insertAccountsPeriodSchemaType>
+                fieldTitle='Period Header'
+                nameInSchema='periodNumeric'
+                className=''
               />
-            ) : null}
+              <InputWithLabel<insertAccountsPeriodSchemaType>
+                fieldTitle='Period Ending'
+                nameInSchema='periodEnding'
+              />
 
-            <div className='grid grid-cols-3 gap-4'>
-              <div className='col-span-3 ...'>
-                <h3 className='text-lg font-bold'>Client Information:</h3>
-                <hr className='w-2/5' />
-              </div>
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : accounts_period?.id ? (
+                <CheckboxWithLabel<insertAccountsPeriodSchemaType>
+                  fieldTitle='Completed'
+                  nameInSchema='completed'
+                  message='Yes'
+                />
+              ) : null}
 
-              <div className=''>
-                <span className='mr-5 font-bold'> Client name: </span>
+              <div className='grid grid-cols-3 gap-4'>
+                <div className='col-span-3'>
+                  <h3 className='text-primary text-start text-lg font-bold'>
+                    Client Information:
+                  </h3>
+                  <hr className='w-2/5' />
+                </div>
+
+                <div className='text-start'>
+                  <span className='font-bold'> Client name: </span>
+                </div>
+                <div className='col-span-2 text-start'>
+                  <span>{client.name}</span>
+                </div>
+                <div className='text-start'>
+                  <span className='font-bold'>
+                    {' '}
+                    Client manager:{' '}
+                    <span className='text-muted-foreground'>
+                      (revenue centre)
+                    </span>{' '}
+                  </span>
+                </div>
+                <div className='col-span-2 text-start'>
+                  <span>{client.owner}</span>
+                </div>
+                <div className='flex w-full overflow-hidden'>
+                  <span className='mr-5 font-bold'> Notes: </span>
+                </div>
+                <div className='col-span-2 text-wrap'>
+                  <Textarea value={(client.notes as string) ?? ''} readOnly />
+                </div>
               </div>
-              <div className='col-span-2'>
-                <span>{client.name}</span>
-              </div>
-              <div className=''>
-                <span className='mr-5 font-bold'>
-                  {' '}
-                  Client manager:{' '}
-                  <span className='text-muted-foreground'>
-                    (revenue centre)
-                  </span>{' '}
-                </span>
-              </div>
-              <div className='col-span-2'>
-                <span>{client.owner}</span>
-              </div>
-              <div className='flex w-full overflow-hidden'>
-                <span className='mr-5 font-bold'> Notes: </span>
-              </div>
-              <div className='col-span-2 text-wrap'>
-                <Textarea value={(client.notes as string) ?? ''} readOnly />
+              <div className='full flex justify-between'>
+                <Button
+                  type='submit'
+                  className='w-1/5'
+                  variant='default'
+                  title='Save'
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <LoaderCircle className='animate-spin' /> Saving
+                    </>
+                  ) : (
+                    'Save'
+                  )}
+                </Button>
+
+                <Button
+                  type='button'
+                  className='w-1/5'
+                  variant='destructive'
+                  title='Reset'
+                  onClick={() => {
+                    form.reset(defaultValues)
+                    resetSaveAction()
+                  }}
+                >
+                  Reset
+                </Button>
               </div>
             </div>
-            <div className='full flex justify-between'>
-              <Button
-                type='submit'
-                className='w-1/5'
-                variant='default'
-                title='Save'
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <>
-                    <LoaderCircle className='animate-spin' /> Saving
-                  </>
-                ) : (
-                  'Save'
-                )}
-              </Button>
-
-              <Button
-                type='button'
-                className='w-1/5'
-                variant='destructive'
-                title='Reset'
-                onClick={() => {
-                  form.reset(defaultValues)
-                  resetSaveAction()
-                }}
-              >
-                Reset
-              </Button>
-            </div>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
     </div>
   )
 }
