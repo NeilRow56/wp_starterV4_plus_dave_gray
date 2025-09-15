@@ -15,6 +15,11 @@ import { Button } from '@/components/ui/button'
 import { InputWithLabel } from '@/components/form/input-with-label'
 import { CheckboxWithLabel } from '@/components/form/checkbox-with-label'
 import { Textarea } from '@/components/ui/textarea'
+import { useAction } from 'next-safe-action/hooks'
+import { saveAccountsPeriodAction } from '@/server/accounts-period'
+import { toast } from 'sonner'
+import { DisplayServerActionResponse } from '@/components/display-server-action-response'
+import { LoaderCircle } from 'lucide-react'
 
 interface AccountsPeriodFormProps {
   client: Client // You must have a client to start an accounts period - so it is not optional
@@ -39,17 +44,39 @@ export default function AccountsPeriodForm({
     defaultValues
   })
 
+  const {
+    execute: executeSave,
+    result: saveResult,
+    isPending: isSaving,
+    reset: resetSaveAction
+  } = useAction(saveAccountsPeriodAction, {
+    onSuccess({ data }) {
+      if (data?.message) {
+        toast.success(
+          `Accounts period ${accounts_period ? 'updated ' : 'added'} successfully`
+        )
+      }
+    },
+    onError({ error }) {
+      console.log(error)
+      toast.error(
+        `Failed to ${accounts_period ? 'update' : 'add'} accounts period`
+      )
+    }
+  })
+
   async function submitForm(data: insertAccountsPeriodSchemaType) {
-    console.log(data)
+    executeSave(data)
   }
 
   return (
     <div className='container mx-auto'>
+      <DisplayServerActionResponse result={saveResult} />
       <div className='flex min-w-md flex-col'>
         <h2 className='mb-2 text-2xl font-bold'>
           {accounts_period?.id
             ? `Edit Accounting Period # ${accounts_period.id}`
-            : 'New Accounting Period'}
+            : 'New Ticket Form'}
         </h2>
       </div>
       <Form {...form}>
@@ -112,23 +139,29 @@ export default function AccountsPeriodForm({
             <div className='full flex justify-between'>
               <Button
                 type='submit'
-                className='w-1/4'
+                className='w-1/5'
                 variant='default'
                 title='Save'
-                // disabled={isSaving}
+                disabled={isSaving}
               >
-                Save
+                {isSaving ? (
+                  <>
+                    <LoaderCircle className='animate-spin' /> Saving
+                  </>
+                ) : (
+                  'Save'
+                )}
               </Button>
 
               <Button
                 type='button'
-                className='w-1/4'
+                className='w-1/5'
                 variant='destructive'
                 title='Reset'
-                // onClick={() => {
-                //   form.reset(defaultValues)
-                //   resetSaveAction()
-                // }}
+                onClick={() => {
+                  form.reset(defaultValues)
+                  resetSaveAction()
+                }}
               >
                 Reset
               </Button>
