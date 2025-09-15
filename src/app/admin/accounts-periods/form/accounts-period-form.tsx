@@ -1,0 +1,141 @@
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import { Form } from '@/components/ui/form'
+
+import { AccountingPeriod, Client } from '@/db/schema'
+import {
+  insertAccountsPeriodSchema,
+  insertAccountsPeriodSchemaType
+} from '@/zod-schemas/accounts-period'
+import { Button } from '@/components/ui/button'
+
+import { InputWithLabel } from '@/components/form/input-with-label'
+import { CheckboxWithLabel } from '@/components/form/checkbox-with-label'
+import { Textarea } from '@/components/ui/textarea'
+
+interface AccountsPeriodFormProps {
+  client: Client // You must have a client to start an accounts period - so it is not optional
+  accounts_period?: AccountingPeriod
+}
+
+export default function AccountsPeriodForm({
+  client,
+  accounts_period
+}: AccountsPeriodFormProps) {
+  const defaultValues: insertAccountsPeriodSchemaType = {
+    id: accounts_period?.id ?? '(New)',
+    clientId: accounts_period?.clientId ?? client.id,
+    periodNumeric: accounts_period?.periodNumeric ?? ' ',
+    periodEnding: accounts_period?.periodEnding ?? ' ',
+    completed: accounts_period?.completed ?? false
+  }
+
+  const form = useForm<insertAccountsPeriodSchemaType>({
+    resolver: zodResolver(insertAccountsPeriodSchema),
+    mode: 'onBlur',
+    defaultValues
+  })
+
+  async function submitForm(data: insertAccountsPeriodSchemaType) {
+    console.log(data)
+  }
+
+  return (
+    <div className='container mx-auto'>
+      <div className='flex min-w-md flex-col'>
+        <h2 className='mb-2 text-2xl font-bold'>
+          {accounts_period?.id
+            ? `Edit Accounting Period # ${accounts_period.id}`
+            : 'New Accounting Period'}
+        </h2>
+      </div>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(submitForm)}
+          className='mt-24 flex flex-col gap-4'
+        >
+          <div className='container mx-auto flex w-full max-w-lg min-w-[400px] flex-col gap-4'>
+            <InputWithLabel<insertAccountsPeriodSchemaType>
+              fieldTitle='Period Header'
+              nameInSchema='periodNumeric'
+              className=''
+            />
+            <InputWithLabel<insertAccountsPeriodSchemaType>
+              fieldTitle='Period Ending'
+              nameInSchema='periodEnding'
+            />
+
+            {accounts_period?.id ? (
+              <CheckboxWithLabel<insertAccountsPeriodSchemaType>
+                fieldTitle='Completed'
+                nameInSchema='completed'
+                message='Yes'
+                // disabled={!isEditable}
+              />
+            ) : null}
+
+            <div className='grid grid-cols-3 gap-4'>
+              <div className='col-span-3 ...'>
+                <h3 className='text-lg font-bold'>Client Information:</h3>
+                <hr className='w-2/5' />
+              </div>
+
+              <div className=''>
+                <span className='mr-5 font-bold'> Client name: </span>
+              </div>
+              <div className='col-span-2'>
+                <span>{client.name}</span>
+              </div>
+              <div className=''>
+                <span className='mr-5 font-bold'>
+                  {' '}
+                  Client manager:{' '}
+                  <span className='text-muted-foreground'>
+                    (revenue centre)
+                  </span>{' '}
+                </span>
+              </div>
+              <div className='col-span-2'>
+                <span>{client.owner}</span>
+              </div>
+              <div className='flex w-full overflow-hidden'>
+                <span className='mr-5 font-bold'> Notes: </span>
+              </div>
+              <div className='col-span-2 text-wrap'>
+                {/* <p className=''>{client.notes}</p> */}
+                <Textarea value={client.notes as string} readOnly />
+              </div>
+            </div>
+            <div className='full flex justify-between'>
+              <Button
+                type='submit'
+                className='w-1/4'
+                variant='default'
+                title='Save'
+                // disabled={isSaving}
+              >
+                Save
+              </Button>
+
+              <Button
+                type='button'
+                className='w-1/4'
+                variant='destructive'
+                title='Reset'
+                // onClick={() => {
+                //   form.reset(defaultValues)
+                //   resetSaveAction()
+                // }}
+              >
+                Reset
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </div>
+  )
+}

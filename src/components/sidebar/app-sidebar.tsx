@@ -42,6 +42,11 @@ const data = {
       url: '/admin/clients',
       icon: IconListDetails
     },
+    {
+      title: 'Accounts Periods',
+      url: '/admin/accounts-periods',
+      icon: IconListDetails
+    },
 
     {
       title: 'Team',

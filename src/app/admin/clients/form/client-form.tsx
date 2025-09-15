@@ -57,6 +57,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
     onSuccess({ data }) {
       if (data?.message) {
         toast.success(`Client ${client ? 'updated ' : 'added'} successfully`)
+        console.log(data)
       }
     },
     onError({ error }) {

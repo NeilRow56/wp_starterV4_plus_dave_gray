@@ -5,8 +5,7 @@ import {
   timestamp,
   boolean,
   pgEnum,
-  varchar,
-  integer
+  varchar
 } from 'drizzle-orm/pg-core'
 
 export const role = pgEnum('role', ['admin', 'manager', 'team'])
@@ -105,7 +104,7 @@ export const accountsPeriod = pgTable('accounts_period', {
   clientId: text('customer_id')
     .notNull()
     .references(() => clients.id),
-  periodNumeric: integer('period_numeric').notNull(),
+  periodNumeric: varchar('period_numeric').notNull(),
   periodEnding: varchar('period_ending').notNull(),
   completed: boolean('completed').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
