@@ -94,10 +94,10 @@ export const clients = pgTable('clients', {
 export type Client = typeof clients.$inferSelect
 
 export const ClientRelations = relations(clients, ({ many }) => ({
-  accountinPeriods: many(accountsPeriod)
+  accountinPeriods: many(accounts_period)
 }))
 
-export const accountsPeriod = pgTable('accounts_period', {
+export const accounts_period = pgTable('accounts_period', {
   id: text('id')
     .primaryKey()
     .default(sql`gen_random_uuid()`),
@@ -114,15 +114,18 @@ export const accountsPeriod = pgTable('accounts_period', {
     .$onUpdate(() => new Date())
 })
 
-export type AccountingPeriod = typeof accountsPeriod.$inferSelect
+export type AccountsPeriod = typeof accounts_period.$inferSelect
 
-export const accountsPeriodRelations = relations(accountsPeriod, ({ one }) => ({
-  client: one(clients, {
-    fields: [accountsPeriod.clientId],
-    references: [clients.id]
+export const accountsPeriodRelations = relations(
+  accounts_period,
+  ({ one }) => ({
+    client: one(clients, {
+      fields: [accounts_period.clientId],
+      references: [clients.id]
+    })
+    // accountsSections: many(accountsSection)
   })
-  // accountsSections: many(accountsSection)
-}))
+)
 
 export const schema = {
   user,
@@ -131,6 +134,6 @@ export const schema = {
   verification,
   clients,
   ClientRelations,
-  accountsPeriod,
+  accounts_period,
   accountsPeriodRelations
 }

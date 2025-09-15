@@ -2,15 +2,15 @@
 
 import { db } from '@/db'
 
-import { accountsPeriod } from '@/db/schema'
+import { accounts_period } from '@/db/schema'
 
 import { eq } from 'drizzle-orm'
 
 export async function getAccountsPeriod(id: string) {
-  const accounts_period = await db
+  const accountsPeriod = await db
     .select()
-    .from(accountsPeriod)
-    .where(eq(accountsPeriod.id, id))
+    .from(accounts_period)
+    .where(eq(accounts_period.id, id))
 
-  return accounts_period[0]
+  return accountsPeriod[0]
 }

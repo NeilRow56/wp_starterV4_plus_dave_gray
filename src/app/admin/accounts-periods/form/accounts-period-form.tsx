@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 
 import { Form } from '@/components/ui/form'
 
-import { AccountingPeriod, Client } from '@/db/schema'
+import { AccountsPeriod, Client } from '@/db/schema'
 import {
   insertAccountsPeriodSchema,
   insertAccountsPeriodSchemaType
@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 interface AccountsPeriodFormProps {
   client: Client // You must have a client to start an accounts period - so it is not optional
-  accounts_period?: AccountingPeriod
+  accounts_period?: AccountsPeriod
 }
 
 export default function AccountsPeriodForm({
