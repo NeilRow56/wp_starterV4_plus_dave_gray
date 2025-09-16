@@ -101,7 +101,7 @@ export const accounts_period = pgTable('accounts_period', {
   id: text('id')
     .primaryKey()
     .default(sql`gen_random_uuid()`),
-  clientId: text('customer_id')
+  clientId: text('client_id')
     .notNull()
     .references(() => clients.id),
   periodNumeric: varchar('period_numeric').notNull(),

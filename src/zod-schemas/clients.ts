@@ -7,12 +7,12 @@ export const insertClientSchema = createInsertSchema(clients, {
   name: schema =>
     schema
       .min(1, 'Name is required')
-      .max(20, { error: 'Name must be at most 20 characters!' }),
+      .max(100, { error: 'Name must be at most 100 characters!' }),
   userId: schema => schema.min(1, 'UserId is required'),
   owner: schema =>
     schema
       .min(1, 'Fee earner is required')
-      .max(20, { error: 'Fee earner must be at most 20 characters!' }),
+      .max(50, { error: 'Fee earner must be at most 50 characters!' }),
   entity_type: schema => schema.length(2, 'Entity type is required')
 })
 

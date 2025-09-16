@@ -1,7 +1,7 @@
 import React from 'react'
 import ClientSearch from './client-search'
 import { getClientSearchResults } from '@/lib/queries/get-client-search-results'
-import * as Sentry from '@sentry/nextjs'
+
 import ClientTable from './client-table'
 
 export const metadata = {
@@ -19,14 +19,14 @@ export default async function ClientsPage({
 
   // temporary check by Sentry
 
-  const span = Sentry.startInactiveSpan({
-    name: 'getClientSearchResults-1'
-  })
+  // const span = Sentry.startInactiveSpan({
+  //   name: 'getClientSearchResults-1'
+  // })
 
   //query database
   const results = await getClientSearchResults(searchText)
 
-  span.end()
+  // span.end()
 
   return (
     <>

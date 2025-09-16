@@ -10,6 +10,7 @@ export async function getClientSearchResults(searchText: string) {
       or(
         ilike(clients.name, `%${searchText}%`),
         ilike(clients.owner, `%${searchText}%`)
+        // sql`lower(concat(${customers.firstName}, ' ', ${customers.lastName})) LIKE ${`%${searchText.toLowerCase().replace(' ', '%')}%`}`,
       )
     )
     .orderBy(clients.name)

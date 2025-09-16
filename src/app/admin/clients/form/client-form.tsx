@@ -101,7 +101,7 @@ export const ClientForm = ({ user, client }: ClientFormProps) => {
               />
 
               <InputWithLabel<insertClientSchemaType>
-                fieldTitle='Fee Earner'
+                fieldTitle='Client Manager / Revenue Centre'
                 nameInSchema='owner'
               />
 
