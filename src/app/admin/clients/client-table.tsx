@@ -76,7 +76,7 @@ export default function ClientTable({ data }: Props) {
               key={row.id}
               className='hover:bg-border/25 dark:hover:bg-ring/40 cursor-pointer'
               onClick={() =>
-                router.push(`/customers/form?customerId=${row.original.id}`)
+                router.push(`/admin/clients/form?clientId=${row.original.id}`)
               }
             >
               {row.getVisibleCells().map(cell => (
