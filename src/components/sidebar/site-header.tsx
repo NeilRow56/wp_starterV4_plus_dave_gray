@@ -1,6 +1,8 @@
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { ModeToggle } from '../mode-toggle'
+import { NavButtonMenu } from './nav-button-menu'
+import { UsersRound } from 'lucide-react'
 
 export function SiteHeader() {
   return (
@@ -16,6 +18,14 @@ export function SiteHeader() {
           <span className='text-xl md:text-2xl'>AccPac</span>
         </div>
         <div className='ml-auto flex items-center gap-2'>
+          <NavButtonMenu
+            icon={UsersRound}
+            label='Customers Menu'
+            choices={[
+              { title: 'Search Clients', href: '/admin/clients' },
+              { title: 'New Client', href: '/admin/clients/form' }
+            ]}
+          />
           <ModeToggle />
         </div>
       </div>
