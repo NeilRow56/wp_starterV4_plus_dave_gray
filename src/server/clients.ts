@@ -8,7 +8,7 @@ import {
   insertClientSchema,
   insertClientSchemaType
 } from '@/zod-schemas/clients'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 import { flattenValidationErrors } from 'next-safe-action'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -35,6 +35,31 @@ export async function getClientTwo(id: string) {
   const client = await db.select().from(clients).where(eq(clients.id, id))
 
   return client[0]
+}
+
+export async function getUserClients(userId: string) {
+  const clientsByUserId = await db
+    .select({
+      id: clients.id,
+      name: clients.name,
+      userId: clients.userId,
+      owner: clients.owner,
+      active: clients.active
+    })
+    .from(clients)
+    .where(and(eq(clients.userId, userId)))
+    .orderBy(asc(clients.name))
+
+  return clientsByUserId
+}
+
+export const deleteClient = async (id: string) => {
+  try {
+    await db.delete(clients).where(eq(clients.id, id))
+    return { success: true, message: 'Client deleted successfully' }
+  } catch {
+    return { success: false, message: 'Failed to delete client' }
+  }
 }
 
 //use-safe-actions

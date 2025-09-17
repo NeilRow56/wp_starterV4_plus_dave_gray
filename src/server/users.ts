@@ -33,6 +33,23 @@ export const getCurrentUser = async () => {
   }
 }
 
+export const getCurrentUserId = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect('/auth/sign-in')
+  }
+
+  const userId = session.session.userId
+
+  return {
+    ...session,
+    userId
+  }
+}
+
 export async function getClientUser(id: string) {
   const userDetails = await db.select().from(user).where(eq(user.id, id))
 

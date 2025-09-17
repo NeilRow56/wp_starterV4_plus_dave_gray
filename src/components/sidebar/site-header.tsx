@@ -22,7 +22,7 @@ export function SiteHeader() {
             icon={UsersRound}
             label='Customers Menu'
             choices={[
-              { title: 'Search Clients', href: '/admin/clients' },
+              { title: 'Search Clients', href: '/admin/clients/search' },
               { title: 'New Client', href: '/admin/clients/form' }
             ]}
           />
